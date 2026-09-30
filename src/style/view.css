@@ -1,0 +1,14 @@
+.main-cont {
+  width: 60%;
+  height: 100%;
+  overflow: hidden;
+
+  border: 4px solid #2c3e50;
+}
+
+.img-cont {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
