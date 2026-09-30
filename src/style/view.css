@@ -1,3 +1,9 @@
+.view-cont {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .main-cont {
   width: 60%;
   height: 100%;

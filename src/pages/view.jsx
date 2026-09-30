@@ -3,96 +3,57 @@
 	import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 	import '../style/view.css'
 
+	function cal (x, y, charX, charY, rSqred) {
+		const subX = x - charX
+		const subY = y - charY
+		const addedSub = Math.pow(subX, 2) + Math.pow(subY, 2)
+		return (addedSub <= rSqred) 
+	}
+
 	function View () {
 		const [waldo, setWaldo] = useState(false)
 		const [welda, setWelda] = useState(false)
 		const [odlaw, setOdlaw] = useState(false)
 		const [wizard, setWizard] = useState(false)
-
 		const imgRef = useRef(null)
 
+		const allFound =  ( waldo && welda && odlaw && wizard)
+
 		function handleCoords(e) {
+			if (allFound) return console.log('already found em all')
+	
 			const img = imgRef.current
 			const rec = img.getBoundingClientRect()
 
 			const x = Math.floor(((e.clientX - rec.left) / rec.width) * img.naturalWidth)
 			const y = Math.floor(((e.clientY - rec.top) / rec.height) * img.naturalHeight)
 
-			// repetition
 			if (!waldo) {
-				// check waldo
 				// x = 1585, y = 636
-				if (x && y) {
-					const subX = x - 1585
-					const subY = y - 636
-					const addedSub = Math.pow(subX, 2) + Math.pow(subY, 2)
-					// waldo's r is 50 , 50 ^ 2 = 2500
-					const r = 2500
-					if (addedSub <= r) {
-						setWaldo(true)
-						console.log('Found waldo')
-					}
-				}
+				if (cal(x, y, 1585, 636, 2500)) setWaldo(true)
 			}
 
 			if (!welda) {
-				// check welda
 				// x = 1989, y = 684
-				if (x && y) {
-					const subX = x - 1989
-					const subY = y - 684
-					const addedSub = Math.pow(subX, 2) + Math.pow(subY, 2)
-					// waldo's r is 30 , 30 ^ 2 = 900
-					const r = 900
-					if (addedSub <= r) {
-						setWelda(true)
-						console.log('Found welda')
-					}
-				}
+				if (cal(x, y, 1989, 684, 2500)) setWelda(true)
 			}
 			
 
 			if (!odlaw) {
-				// check oldaw
 				// x = 272, y = 604
-				if (x && y) {
-					const subX = x - 272
-					const subY = y - 604
-					const addedSub = Math.pow(subX, 2) + Math.pow(subY, 2)
-					// waldo's r is 50 , 50 ^ 2 = 2500
-					const r = 2500
-					if (addedSub <= r) {
-						setOdlaw(true)
-						console.log('Found odlaw')
-					}
-				}
+				if (cal(x, y, 272, 604, 2500)) setOdlaw(true)
 			}
 			
 			if (!wizard) {
-				// check wizard
 				// x = 694, y = 606 (to be saved)
-				if (x && y) {
-					const subX = x - 694
-					const subY = y - 606
-					const addedSub = Math.pow(subX, 2) + Math.pow(subY, 2)
-					// wizard's r is 50 , 50 ^ 2 = 2500
-					const r = 2500
-					if (addedSub <= r) {
-						setWizard(true)
-						console.log('Found wizard')
-					}
-				}
+				if (cal(x, y, 694, 606, 2500)) setWizard(true)
 			}
 
-			if ( waldo && welda && odlaw && wizard) console.log('Found em all')
-
 			console.log({x, y})
-
-			return
 		}
 
 		return (
-		<>
+		<div className='view-cont'>
 			<div className='main-cont' onDoubleClickCapture={handleCoords}>
 			<TransformWrapper
 				initialScale={1}
@@ -116,8 +77,16 @@
 			</TransformWrapper>
 			</div>
 
+			<div className='char-check-cont'>
+				<p>Found waldo? {waldo ? 'yes' : 'no'}</p>
+				<p>Found welda? {welda ? 'yes' : 'no'}</p>
+				<p>Found odlaw? {odlaw ? 'yes' : 'no'}</p>
+				<p>Found wizard? {wizard ? 'yes' : 'no'}</p>
 
-		</>
+				{allFound && <p>You found them all!</p>}
+			</div>
+
+		</div>
 		);
 	}
 
