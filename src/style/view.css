@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
 
 .main-cont {
@@ -17,4 +18,39 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.char-check-cont {
+  display: flex;
+  gap: 10px;
+}
+
+.char-cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+
+  border: 2px solid #2c3e50;
+}
+.char-cont > img {
+  width: auto;
+  height: 150px;
+}
+.char-cont > h2 {
+  margin: 0;
+}
+.check-red, .check-green {
+  display: flex;
+  width: 100%;
+  height: 20px;
+}
+
+.check-green {
+  background-color: green;
+}
+.check-red {
+  background-color: red;
 }
