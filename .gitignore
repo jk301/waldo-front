@@ -11,7 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
-src/pics
+public/characters
+public/scenes
 
 # Editor directories and files
 .vscode/*
