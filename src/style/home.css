@@ -1,0 +1,39 @@
+
+.home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.waldo-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    border: 2px solid green;
+}
+.waldo-card-img {
+    height: auto;
+    width: 300px;
+}
+
+.waldo-card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-char {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.card-char > img {
+    width: auto;
+    height: 80px;
+}
