@@ -11,7 +11,7 @@ function App() {
     <Nav />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/view' element={<View />} />
+        <Route path='/view/:slug' element={<View />} />
       </Routes>
     </BrowserRouter>
   )
