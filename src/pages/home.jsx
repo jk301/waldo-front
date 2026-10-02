@@ -6,31 +6,33 @@ function Home () {
     const [scenes, setScenes] = useState([])
     const [loading, setLoading] = useState(true)
 
-    async function getScenes () {
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/scene/all`)
-            if (res.ok) {
-                const data = await res.json()
-                setScenes(data.allScenes)
-            }
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
     function getSrc(entity, who) {
         if (entity === 'scene') {
-            return `../../public/scenes/${who}.jpg`
+            return `/scenes/${who}.jpg`
         } else if (entity === 'char') {
-            return `../../public/characters/${who}.jpg`
-        } else return 
+            return `/characters/${who}.jpg`
+        } else return ''
     }
 
-    useEffect(() => {
-        getScenes()
-    },[scenes])
+    useEffect(() => {(
+        async () => {
+            try {
+                console.log('actually fetching')
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/scene/all`)
+                if (res.ok) {
+                    console.log('response is ok')
+                    const data = await res.json()
+                    setScenes(data.allScenes)
+                    console.log('scene set')
+                }
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setLoading(false)
+            }
+        }
+    )()
+    },[])
 
 
     if (loading) return <div className="status-msg"><p>Fetching scenes...</p></div>
@@ -40,26 +42,15 @@ function Home () {
 
     return (
         <div className="home">
-            {scenes.forEach((scene) => (
-                <Link to={`/view/${scene.slug}`}>
-                    <div className="waldo-card">
+            {scenes.map((scene) => (
+                <Link key={scene.id} to={`/view/${scene.slug}`}>
+                    <div className="waldo-card" >
                         <h1>{scene.title}</h1>
                             <img 
                                 className="waldo-card-img" 
-                                src={() => getSrc(scene.slug)} 
+                                src={getSrc('scene', scene.slug)} 
                                 alt={scene.title} 
                             />
-                            <div className="waldo-card-info" >
-                                <h3>Find</h3>
-                                <div className="card-char">
-                                    {scene.characters.forEach( char => (
-                                        <img 
-                                            src={getSrc('char', char.name)} 
-                                            alt={char.name} 
-                                        />
-                                    ))}
-                                </div>
-                            </div>
                     </div>
                 </Link>
             ))}
