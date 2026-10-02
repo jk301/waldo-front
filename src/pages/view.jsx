@@ -23,11 +23,48 @@ function View () {
 	const [found, setFound] = useState([])
 
 	// Timer
-	const [startTime, setStartTime] = useState()
-	const [elapsed, setElapsed] = useState()
-	const [tick, setTick] = useState()
+	const [startTime, setStartTime] = useState(null)
+	const [elapsed, setElapsed] = useState(null)
+	const [, setTick] = useState(0)
 
 	const allFound =  scene?.characters.every(c => found.includes(c.name)) ?? false
+
+	// Timer
+	useEffect(() => {
+		if (!scene || !start) return
+
+		setStartTime(Date.now())
+		const id = setInterval(() => setTick(n => n + 1), 50)
+		return () => clearInterval(id)
+	},[scene, start])
+
+	useEffect(() => {
+		if (!allFound || startTime === null || elapsed !== null) return
+		setElapsed(Date.now() - startTime)
+	}, [allFound, startTime, elapsed])
+
+	useEffect(() => {
+		setStartTime(null)
+		setElapsed(null)
+	},[slug])
+
+	const ms = elapsed ?? (startTime !== null ? Date.now() - startTime : null)
+
+	function formatTime(ms) {
+		const total = Math.floor(ms / 1000)
+		const m = Math.floor(total / 60)
+		const s = total % 60
+		const cs = Math.floor((ms % 1000) / 10) // centiseconds
+		return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`
+	}
+
+	// Delays/Clears 
+	useEffect(() => {
+		if (allFound) {
+			const id = setTimeout(() => setShowWin(true), 1000)
+			return () => clearTimeout(id)
+		} else return
+	}, [allFound])
 
 	// scene fetch
 	useEffect(() => {(
@@ -45,14 +82,6 @@ function View () {
 			}
 		})()
 	},[slug])
-
-	// Delays/Clears
-	useEffect(() => {
-		if (allFound) {
-			const id = setTimeout(() => setShowWin(true), 1000)
-			return () => clearTimeout(id)
-		} else return
-	}, [allFound])
 
 	useEffect(() => {
 		if (miss) {
@@ -178,7 +207,7 @@ function View () {
 						</div>
 
 						<div className='view-timer'>
-							[00:00](wip)
+							{ms === null ? '--:--' : formatTime(ms)}
 						</div>
 
 						<div className='view-tips'>
@@ -192,7 +221,7 @@ function View () {
 								<div className="winner-overlay">
 									<div className="winner-card">
 										<h1>You found them all!</h1>
-										<p>Time: (will be avaiable soon)</p>
+										<p>Time: {formatTime(ms)}</p>
 										<form action="" className='winner-form'>
 											<input type="text" required placeholder='your name'/>
 											<button>Submit to leaderboard</button>
