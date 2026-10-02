@@ -8,6 +8,7 @@ function View () {
 	console.log('view page rendered/refreshed')
 	const navigate = useNavigate()
 	const { slug } = useParams()
+	const [start, setStart] = useState(false)
 
 	const imgRef = useRef(null)
 	const [imgSize, setImgSize] = useState({ w: 0, h: 0 })
@@ -108,99 +109,116 @@ function View () {
     }
 
 	return (
-	<div className='view-cont'>
-		<div className='main-cont' onDoubleClickCapture={handleCoords}>
-			<TransformWrapper
-				initialScale={1}
-				minScale={1}
-				maxScale={10} 
-				centerOnInit 
-				wheel={{ step: 0.002 }} 
-				doubleClick={{ disabled: true }} 
-			>
-				<TransformComponent
-				wrapperStyle={{ width: "100%", height: "100%" }} 
-				contentStyle={{ width: "100%", height: "100%" }}
-				>
-				<img 
-					ref={imgRef} 
-					src={getSrc('scene', scene.slug)}
-					alt="waldo in the beach"
-					className='img-cont' 
-					onLoad={(e) => {
-						setImgSize({
-						w: e.currentTarget.naturalWidth,
-						h: e.currentTarget.naturalHeight,
-						})
-					}}
-				/>
-				{/* // marker here  */}
-				{imgSize.w > 0 &&
-					marker.map((m) => (
-						<div
-							key={m.id}
-							className={`marker`}
-							style={{
-								left: `${(m.x / imgSize.w) * 100}%`,
-								top: `${(m.y / imgSize.h) * 100}%`,
-							}}
+		<div>
+			{ start 
+				? <div className='view-cont'>
+					<div className='main-cont' onDoubleClickCapture={handleCoords}>
+						<TransformWrapper
+							initialScale={1}
+							minScale={1}
+							maxScale={10} 
+							centerOnInit 
+							wheel={{ step: 0.002 }} 
+							doubleClick={{ disabled: true }} 
+						>
+							<TransformComponent
+							wrapperStyle={{ width: "100%", height: "100%" }} 
+							contentStyle={{ width: "100%", height: "100%" }}
 							>
-							{m.status === 'hit' && m.name && (
-								<span className="marker-label">{m.name}</span>
+							<img 
+								ref={imgRef} 
+								src={getSrc('scene', scene.slug)}
+								alt="waldo in the beach"
+								className='img-cont' 
+								onLoad={(e) => {
+									setImgSize({
+									w: e.currentTarget.naturalWidth,
+									h: e.currentTarget.naturalHeight,
+									})
+								}}
+							/>
+							{/* // marker here  */}
+							{imgSize.w > 0 &&
+								marker.map((m) => (
+									<div
+										key={m.id}
+										className={`marker`}
+										style={{
+											left: `${(m.x / imgSize.w) * 100}%`,
+											top: `${(m.y / imgSize.h) * 100}%`,
+										}}
+										>
+										{m.status === 'hit' && m.name && (
+											<span className="marker-label">{m.name}</span>
+										)}
+									</div>
+							))}
+							</TransformComponent>
+						</TransformWrapper>
+						<p className='img-div-status'>
+							{checking && "checking" }
+							{miss && "miss!"}
+						</p>
+					</div>
+
+					<div className='view-detail'>
+						<div className='char-check-cont'>
+							{scene.characters.map( char => (
+								<div key={char.id} className='char-cont'>
+									<h2>{char.name}</h2>
+									<img src={getSrc('char', char.name)} alt={char.name} />
+				
+									<div className={found.includes(char.name) ? 'check-green' : 'check-red'} ></div>
+								</div>
+							))}
+						</div>
+
+						<div className='view-timer'>
+							[00:00](wip)
+						</div>
+
+						<div className='view-tips'>
+							<p>-- Double right click for checking if its a character.</p>
+							<p>-- use scroll for zooming in & out</p>
+							<p>-- Use click & drag to move the scene around.</p>
+						</div>
+
+						<div>
+							{showWin && (
+								<div className="winner-overlay">
+									<div className="winner-card">
+										<h1>You found them all!</h1>
+										<p>Time: (will be avaiable soon)</p>
+										<form action="" className='winner-form'>
+											<input type="text" required placeholder='your name'/>
+											<button>Submit to leaderboard</button>
+										</form>
+										<button onClick={() => navigate('/')}>Back to Home</button>
+									</div>
+								</div>
 							)}
 						</div>
-				))}
-				</TransformComponent>
-			</TransformWrapper>
-			<p className='img-div-status'>
-				{checking && "checking" }
-				{miss && "miss!"}
-			</p>
-		</div>
 
-		<div className='view-detail'>
-			<div className='char-check-cont'>
-				{scene.characters.map( char => (
-					<div key={char.id} className='char-cont'>
-						<h2>{char.name}</h2>
-						<img src={getSrc('char', char.name)} alt={char.name} />
-	
-						<div className={found.includes(char.name) ? 'check-green' : 'check-red'} ></div>
 					</div>
-				))}
-			</div>
 
-			<div className='view-timer'>
-				[00:00](wip)
-			</div>
+				</div> 
 
-			<div className='view-tips'>
-				<h4>// Tips</h4>
-				<p>-- Double right click for checking if its a character.</p>
-				<p>-- use scroll for zooming in & out</p>
-				<p>-- Use click & drag to move the scene around.</p>
-			</div>
-
-			<div>
-				{showWin && (
-					<div className="winner-overlay">
-						<div className="winner-card">
-						<h1>You found them all!</h1>
-						<p>Time: (will be avaiable soon)</p>
-						<form action="" className='winner-form'>
-							<input type="text" required placeholder='your name'/>
-							<button>Submit to leaderboard</button>
-						</form>
-						<button onClick={() => navigate('/')}>Back to Home</button>
-						</div>
+				: <div className='start-page'>
+					<h2>You have to find</h2>
+					<div className='start-find-char'>
+						{scene.characters.map( char => (
+							<div key={char.id} className='start-char-cont'>
+								<h2>{char.name}</h2>
+								<img src={getSrc('char', char.name)} alt={char.name} />
+							</div>
+						))}
 					</div>
-				)}
-			</div>
-
+					<p>The timer would start when you press the button</p>
+					<button onClick={() => setStart(true)}>Start</button>
+				</div>
+			}
 		</div>
-
-	</div>
-	);
+	)
 }
 
 export default View
