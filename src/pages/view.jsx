@@ -22,6 +22,11 @@ function View () {
 
 	const [found, setFound] = useState([])
 
+	// Timer
+	const [startTime, setStartTime] = useState()
+	const [elapsed, setElapsed] = useState()
+	const [tick, setTick] = useState()
+
 	const allFound =  scene?.characters.every(c => found.includes(c.name)) ?? false
 
 	// scene fetch
@@ -40,6 +45,21 @@ function View () {
 			}
 		})()
 	},[slug])
+
+	// Delays/Clears
+	useEffect(() => {
+		if (allFound) {
+			const id = setTimeout(() => setShowWin(true), 1000)
+			return () => clearTimeout(id)
+		} else return
+	}, [allFound])
+
+	useEffect(() => {
+		if (miss) {
+			const id = setTimeout(() => setMiss(false), 1000)
+			return () => clearTimeout(id)
+		} else return
+	}, [miss])
 
 	// handle double click
 	async function handleCoords(e) {
@@ -76,23 +96,7 @@ function View () {
 		} finally {
 			setChecking(false)
 		}
-		
 	}
-
-	// Delays/Clears
-	useEffect(() => {
-		if (allFound) {
-			const id = setTimeout(() => setShowWin(true), 1000)
-			return () => clearTimeout(id)
-		} else return
-	}, [allFound])
-
-	useEffect(() => {
-		if (miss) {
-			const id = setTimeout(() => setMiss(false), 1000)
-			return () => clearTimeout(id)
-		} else return
-	}, [miss])
 
 	// get source
 	function getSrc(entity, who) {
