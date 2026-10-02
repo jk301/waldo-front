@@ -1,25 +1,15 @@
-import { useRef, useState } from 'react' 
+import { useRef, useState, useEffect } from 'react' 
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import '../style/view.css'
-// import { useParams } from 'react-router-dom'
-
-// All of this must be fetched from back
-import beach  from './../pics/waldo-beach.jpg'
-import waldoPic from '../pics/Character-Waldo.jpg'
-import wendaPic from '../pics/Character-Wenda.jpg'
-import wizardPic from '../pics/Character-Wizard.jpg'
-import odlawPic from '../pics/Character-Odlaw.jpg'
-
-function cal (x, y, charX, charY, rSqred) {
-	const subX = x - charX
-	const subY = y - charY
-	const addedSub = Math.pow(subX, 2) + Math.pow(subY, 2)
-	return (addedSub <= rSqred) 
-}
+import { useParams } from 'react-router-dom'
 
 function View () {
-	// const {imgId} = useParams()
+	console.log('hitting comp')
+	const { slug } = useParams()
 	const imgRef = useRef(null)
+
+	const [scene, setScene] = useState(undefined)
+	const [loading, setLoading] = useState(true)
 
 	const [waldo, setWaldo] = useState(false)
 	const [wenda, setWenda] = useState(false)
@@ -28,12 +18,23 @@ function View () {
 
 	const allFound =  ( waldo && wenda && odlaw && wizard)
 
-	// function fetchImg () {
-	// 	// fetch img according to imgId (backend)
-	// 	// img should contain (img, all char coords)
-	// }
+	useEffect(() => {(
+		async () => {
+			try {
+				const res = await fetch(`${import.meta.env.VITE_API_URL}/scene/${slug}`)
+				if (res.ok) {
+					const data = await res.json()
+					setScene(data.scene)
+				}
+			} catch (error) {
+				console.log(error)
+			} finally {
+				setLoading(false)
+			}
+		})()
+	},[slug])
 
-	function handleCoords(e) {
+	async function handleCoords(e) {
 		if (allFound) return console.log('already found em all')
 
 		const img = imgRef.current
@@ -42,29 +43,43 @@ function View () {
 		const x = Math.floor(((e.clientX - rec.left) / rec.width) * img.naturalWidth)
 		const y = Math.floor(((e.clientY - rec.top) / rec.height) * img.naturalHeight)
 
-		if (!waldo) {
-			// x = 1585, y = 636
-			if (cal(x, y, 1585, 636, 2500)) setWaldo(true)
-		}
-
-		if (!wenda) {
-			// x = 1989, y = 684
-			if (cal(x, y, 1989, 684, 2500)) setWenda(true)
-		}
-		
-
-		if (!odlaw) {
-			// x = 272, y = 604
-			if (cal(x, y, 272, 604, 2500)) setOdlaw(true)
-		}
-		
-		if (!wizard) {
-			// x = 694, y = 606 (to be saved)
-			if (cal(x, y, 694, 606, 2500)) setWizard(true)
-		}
-
 		console.log({x, y})
+
+		// WIP
+		try {
+			const res = await fetch(`
+				${import.meta.env.VITE_API_URL}/scene/${slug}/check?x=${x}&y=${y}
+			`)
+			if (res.ok) {
+				const data = await res.json()
+				// check if hit ? if yes then who ?
+				if (data.hit) {
+					if (data.name === 'waldo') setWaldo(true)
+					if (data.name === 'wenda') setWenda(true)
+					if (data.name === 'wizard') setWizard(true)
+					if (data.name === 'odlaw') setOdlaw(true)
+				} else {
+					console.log('miss hit')
+				}
+			}
+		} catch (error) {
+			console.log(error)
+		}
+
 	}
+
+	function getSrc(entity, who) {
+        if (entity === 'scene') {
+            return `../../public/scenes/${who}.jpg`
+        } else if (entity === 'char') {
+            return `../../public/characters/${who}.jpg`
+        } else return 
+    }
+
+	if (loading) return <div className="status-msg"><p>Fetching scenes...</p></div>
+    if (!loading && scene === undefined) { 
+        return <div className="status-msg"><p>Scene unavailable.</p></div>
+    }
 
 	return (
 	<div className='view-cont'>
@@ -83,7 +98,7 @@ function View () {
 			>
 			<img 
 				ref={imgRef} 
-				src={beach}
+				src={getSrc('scene', scene.slug)}
 				alt="waldo in the beach"
 				className='img-cont' 
 			/>
@@ -93,34 +108,22 @@ function View () {
 
 		<div className='view-detail'>
 			<div className='char-check-cont'>
-				<div className='char-cont'>
-					<h2>Waldo</h2>
-					<img src={waldoPic} alt="Waldo" />
-					<div className={waldo ? 'check-green' : 'check-red'} ></div>
-				</div>
-				<div className='char-cont'>
-					<h2>Wenda</h2>
-					<img src={wendaPic} alt="Wenda" />
-					<div className={wenda ? 'check-green' : 'check-red'} ></div>
-				</div>
-				<div className='char-cont'>
-					<h2>Wizard</h2>
-					<img src={wizardPic} alt="Wizard" />
-					<div className={wizard ? 'check-green' : 'check-red'} ></div>
-				</div>
-				<div className='char-cont'>
-					<h2>Odlaw</h2>
-					<img src={odlawPic} alt="Odlaw" />
-					<div className={odlaw ? 'check-green' : 'check-red'} ></div>
-				</div>
+				{scene.characters.forEach( char => (
+					<div key={char.id} className='char-cont'>
+						<h2>{char.name}</h2>
+						<img src={getSrc('char', char.name)} alt={char.name} />
+						{/* problem */}
+						<div className={waldo ? 'check-green' : 'check-red'} ></div>
+					</div>
+				))}
 			</div>
 
 			<div className='view-timer'>
-
+				Timer(wip)
 			</div>
 
 			<div>
-				{allFound && <h2>You found them all!</h2>}
+				{allFound && <h2>Got em all!</h2>}
 			</div>
 
 		</div>
