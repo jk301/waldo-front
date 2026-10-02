@@ -15,6 +15,7 @@ function View () {
 	const [scene, setScene] = useState(undefined)
 	const [loading, setLoading] = useState(true)
 	const [checking, setChecking] = useState(false)
+	const [miss, setMiss] = useState('false')
 	const [marker, setMarker] = useState([])
 	const [showWin, setShowWin] = useState(false)
 
@@ -65,6 +66,7 @@ function View () {
 					setFound((prev) => prev.includes(data.name) ? prev : [...prev, data.name])
 					setMarker((prev) =>  [...prev, {id: crypto.randomUUID(), status: 'hit', x, y, name: data.name}])
 				} else {
+					setMiss(true)
 					console.log('miss hit')
 				}
 			}
@@ -76,13 +78,20 @@ function View () {
 		
 	}
 
-	// 0.5 sec delay before showing overlay
+	// Delays/Clears
 	useEffect(() => {
 		if (allFound) {
-			const id = setTimeout(() => setShowWin(true), 500)
+			const id = setTimeout(() => setShowWin(true), 1000)
 			return () => clearTimeout(id)
 		} else return
 	}, [allFound])
+
+	useEffect(() => {
+		if (miss) {
+			const id = setTimeout(() => setMiss(false), 1000)
+			return () => clearTimeout(id)
+		} else return
+	}, [miss])
 
 	// get source
 	function getSrc(entity, who) {
@@ -101,49 +110,52 @@ function View () {
 	return (
 	<div className='view-cont'>
 		<div className='main-cont' onDoubleClickCapture={handleCoords}>
-		<TransformWrapper
-			initialScale={1}
-			minScale={1}
-			maxScale={10} 
-			centerOnInit 
-			wheel={{ step: 0.002 }} 
-			doubleClick={{ disabled: true }} 
-		>
-			<TransformComponent
-			wrapperStyle={{ width: "100%", height: "100%" }} 
-			contentStyle={{ width: "100%", height: "100%" }}
+			<TransformWrapper
+				initialScale={1}
+				minScale={1}
+				maxScale={10} 
+				centerOnInit 
+				wheel={{ step: 0.002 }} 
+				doubleClick={{ disabled: true }} 
 			>
-			<img 
-				ref={imgRef} 
-				src={getSrc('scene', scene.slug)}
-				alt="waldo in the beach"
-				className='img-cont' 
-				onLoad={(e) => {
-					setImgSize({
-					w: e.currentTarget.naturalWidth,
-					h: e.currentTarget.naturalHeight,
-					})
-				}}
-			/>
-			{/* // marker here  */}
-			{imgSize.w > 0 &&
-				marker.map((m) => (
-					<div
-						key={m.id}
-						className={`marker`}
-						style={{
-							left: `${(m.x / imgSize.w) * 100}%`,
-							top: `${(m.y / imgSize.h) * 100}%`,
-						}}
-						>
-						{m.status === 'hit' && m.name && (
-							<span className="marker-label">{m.name}</span>
-						)}
-					</div>
-			))}
-			</TransformComponent>
-		</TransformWrapper>
-		<p className='img-div-status'></p>
+				<TransformComponent
+				wrapperStyle={{ width: "100%", height: "100%" }} 
+				contentStyle={{ width: "100%", height: "100%" }}
+				>
+				<img 
+					ref={imgRef} 
+					src={getSrc('scene', scene.slug)}
+					alt="waldo in the beach"
+					className='img-cont' 
+					onLoad={(e) => {
+						setImgSize({
+						w: e.currentTarget.naturalWidth,
+						h: e.currentTarget.naturalHeight,
+						})
+					}}
+				/>
+				{/* // marker here  */}
+				{imgSize.w > 0 &&
+					marker.map((m) => (
+						<div
+							key={m.id}
+							className={`marker`}
+							style={{
+								left: `${(m.x / imgSize.w) * 100}%`,
+								top: `${(m.y / imgSize.h) * 100}%`,
+							}}
+							>
+							{m.status === 'hit' && m.name && (
+								<span className="marker-label">{m.name}</span>
+							)}
+						</div>
+				))}
+				</TransformComponent>
+			</TransformWrapper>
+			<p className='img-div-status'>
+				{checking && "checking" }
+				{miss && "miss!"}
+			</p>
 		</div>
 
 		<div className='view-detail'>
