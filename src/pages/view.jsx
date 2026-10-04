@@ -5,10 +5,12 @@ import '../style/view.css'
 import { useParams } from 'react-router-dom'
 
 function View () {
-	console.log('view page rendered/refreshed')
+	// console.log('view page rendered/refreshed')
 	const navigate = useNavigate()
 	const { slug } = useParams()
 	const [start, setStart] = useState(false)
+	const [session, setSession] = useState(null)
+	const [finish, setFinish] = useState(null)
 
 	const imgRef = useRef(null)
 	const [imgSize, setImgSize] = useState({ w: 0, h: 0 })
@@ -16,7 +18,7 @@ function View () {
 	const [scene, setScene] = useState(undefined)
 	const [loading, setLoading] = useState(true)
 	const [checking, setChecking] = useState(false)
-	const [miss, setMiss] = useState('false')
+	const [miss, setMiss] = useState(false)
 	const [marker, setMarker] = useState([])
 	const [showWin, setShowWin] = useState(false)
 
@@ -32,20 +34,69 @@ function View () {
 	// Timer
 	useEffect(() => {
 		if (!scene || !start) return
+		let ignore = false;
 
-		setStartTime(Date.now())
+		(async () => {
+			try {
+				const res = await fetch(`${import.meta.env.VITE_API_URL}/scene/${slug}/start`, {
+					method: 'POST' 
+				})
+				if (!res.ok || ignore) return
+				const data = await res.json()
+				if (ignore) return
+				setSession(data.id)
+				setStartTime(Date.now())
+			} catch (error) {
+				console.log(error)
+			}
+		})()
+
+		return () => { ignore = true }
+	}, [scene, start, slug])
+
+	useEffect(() => {
+		if (!scene || !start) return
+
 		const id = setInterval(() => setTick(n => n + 1), 50)
 		return () => clearInterval(id)
-	},[scene, start])
+	}, [start, scene])
 
 	useEffect(() => {
 		if (!allFound || startTime === null || elapsed !== null) return
-		setElapsed(Date.now() - startTime)
-	}, [allFound, startTime, elapsed])
+		
+		// fetch stop
+		try {
+			(async () => {
+				const res = await fetch(`${import.meta.env.VITE_API_URL}/scene/${slug}/${session}/stop`, { 
+					method: 'POST'
+				})
 
+				if (res.ok) {
+					const data = await res.json()
+					console.log("finish set")
+					setFinish(data.timeMs)
+					console.log(`finish time: ${finish}`)
+				}
+			})()
+		} catch (error) {
+			console.log(error)
+		}
+
+		setElapsed(Date.now() - startTime)
+	}, [allFound, startTime, elapsed, slug, finish, session])
+
+	// reset on slug change
 	useEffect(() => {
 		setStartTime(null)
 		setElapsed(null)
+		setSession(null)
+		setStart(false)
+		setImgSize ({ w: 0, h: 0 })
+		setScene(undefined)
+		setMarker([])
+		setShowWin(false)
+		setFound([])
+		setLoading(true)
 	},[slug])
 
 	const ms = elapsed ?? (startTime !== null ? Date.now() - startTime : null)
@@ -161,7 +212,7 @@ function View () {
 							<img 
 								ref={imgRef} 
 								src={getSrc('scene', scene.slug)}
-								alt="waldo in the beach"
+								alt={scene.title} 
 								className='img-cont' 
 								onLoad={(e) => {
 									setImgSize({
@@ -207,11 +258,11 @@ function View () {
 						</div>
 
 						<div className='view-timer'>
-							{ms === null ? '--:--' : formatTime(ms)}
+							{ms === null ? '--:--' : finish ? formatTime(finish) : formatTime(ms)}
 						</div>
 
 						<div className='view-tips'>
-							<p>-- Double right click for checking if its a character.</p>
+							<p>-- Double 'left' click for checking if its a character.</p>
 							<p>-- use scroll for zooming in & out</p>
 							<p>-- Use click & drag to move the scene around.</p>
 						</div>
@@ -221,7 +272,7 @@ function View () {
 								<div className="winner-overlay">
 									<div className="winner-card">
 										<h1>You found them all!</h1>
-										<p>Time: {formatTime(ms)}</p>
+										<p>Time: {formatTime(finish)}</p>
 										<form action="" className='winner-form'>
 											<input type="text" required placeholder='your name'/>
 											<button>Submit to leaderboard</button>
