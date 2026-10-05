@@ -6,6 +6,7 @@ import View from "./pages/view";
 import Leaderboard from "./pages/leaderboard";
 import SceneLb from "./pages/sceneLb";
 import About from "./pages/about";
+// import Coords from "./pages/coords";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Route path='/leaderboards' element={<Leaderboard />} />
         <Route path='/leaderboard/:slug' element={<SceneLb />} />
         <Route path='/about' element={<About />} />
+        {/* <Route path='/test/coords/:slug' element={<Coords />} /> */}
       </Routes>
     </BrowserRouter>
   )
