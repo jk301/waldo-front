@@ -40,7 +40,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-.lb-empty {
+.leaderboard td.lb-empty {
   text-align: center;
+  width: auto;
+  padding: 24px;
   opacity: 0.7;
 }
