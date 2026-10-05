@@ -54,7 +54,7 @@ function SceneLb () {
                             <tr key={s.id}>
                                 <td>{i + 1}</td>
                                 <td>{s.playerName}</td>
-                                <td>{formatTime(s.timeMs)}</td>
+                                <td>[{formatTime(s.timeMs)}]</td>
                             </tr>
                             ))}
                         </tbody>
