@@ -194,7 +194,7 @@ function View () {
 				headers: {
 					'Content-Type': 'application/json'
 				}, 
-				body: JSON.stringify({ playerName: lbName, timeMs: finish })
+				body: JSON.stringify({ playerName: lbName, sessId: session })
 			})
 			if (res.ok) {
 				navigate(`/leaderboard/${slug}`)
@@ -213,7 +213,7 @@ function View () {
         } else return 
     }
 
-	if (loading) return <div className="status-msg"><p>Fetching scenes please wait...</p></div>
+	if (loading) return <div className="status-msg"><p>Fetching scene details please wait...</p></div>
     if (!loading && scene === undefined) { 
         return <div className="status-msg"><p>Scene unavailable.</p></div>
     }
@@ -265,10 +265,8 @@ function View () {
 							))}
 							</TransformComponent>
 						</TransformWrapper>
-						<p className='img-div-status'>
-							{checking && "checking" }
-							{miss && "miss!"}
-						</p>
+							{checking && <p className='img-div-status'>Checking..</p> }
+							{miss && <p className='img-div-status'>Miss!</p>}
 					</div>
 
 					<div className='view-detail'>
@@ -303,6 +301,8 @@ function View () {
 										<form onSubmit={handleLBSubmit} className='winner-form'>
 											<input 
 												type="text" 
+												minLength={3} 
+												maxLength={15}
 												required 
 												placeholder='your name' 
 												value={lbName}
