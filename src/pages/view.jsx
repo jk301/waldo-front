@@ -38,7 +38,7 @@ function View () {
 
 	// Timer
 	useEffect(() => {
-		if (!scene || !start) return
+		if (!start) return
 		let ignore = false;
 
 		(async () => {
@@ -291,6 +291,7 @@ function View () {
 							<p>-- Double 'left' click for checking if its a character.</p>
 							<p>-- use scroll for zooming in & out</p>
 							<p>-- Use click & drag to move the scene around.</p>
+							<p>-- Timer could have a delay :)</p>
 						</div>
 
 						<div>

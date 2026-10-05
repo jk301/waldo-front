@@ -35,7 +35,7 @@ function Home () {
     },[])
 
 
-    if (loading) return <div className="status-msg"><p>Fetching scenes...</p></div>
+    if (loading) return <div className="status-msg"><p>Fetching scenes please wait...</p></div>
     if (!loading && scenes.length === 0) { 
         return <div className="status-msg"><p>No scenes available for now.</p></div>
     }
@@ -59,22 +59,3 @@ function Home () {
 }
 
 export default Home
-
-
-{/* <div className="home">
-    <Link to={'/view'}>
-        <div className="waldo-card">
-            <h1>Where’s Waldo Beach</h1>
-                <img className="waldo-card-img" src={waldo_beach} alt="waldo beach picture" />
-                <div className="waldo-card-info" >
-                    <h3>Find</h3>
-                    <div className="card-char">
-                        <img src={waldo_char} alt="Waldo" />
-                        <img src={wenda_char} alt="Waldo" />
-                        <img src={wizard_char} alt="Waldo" />
-                        <img src={odlaw_char} alt="Waldo" />
-                    </div>
-                </div>
-        </div>
-    </Link>
-</div> */}
