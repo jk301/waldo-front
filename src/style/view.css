@@ -209,20 +209,3 @@
 .start-char-cont > h2 {
   margin: 0;
 }
-
-
-/* <div className='start-page'>
-  <h1>Scene name: {scene.name}</h1>
-  <h3>You have to find</h3>
-  <div className='start-find-char'>
-    {scene.characters.map( char => (
-      <div key={char.id} className='start-char-cont'>
-        <h2>{char.name}</h2>
-        <img src={getSrc('char', char.name)} alt={char.name} />
-      </div>
-    ))}
-  </div>
-  <p>The timer would start when you press the button</p>
-  <button onClick={handleStart}>Start</button>
-</div> 
-*/
