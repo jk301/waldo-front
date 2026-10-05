@@ -5,16 +5,18 @@ import '../style/view.css'
 import { useParams } from 'react-router-dom'
 
 function View () {
-	// console.log('view page rendered/refreshed')
+	// page flow info
 	const navigate = useNavigate()
 	const { slug } = useParams()
 	const [start, setStart] = useState(false)
 	const [session, setSession] = useState(null)
 	const [finish, setFinish] = useState(null)
 
+	// image
 	const imgRef = useRef(null)
 	const [imgSize, setImgSize] = useState({ w: 0, h: 0 })
 
+	// scene dependant
 	const [scene, setScene] = useState(undefined)
 	const [loading, setLoading] = useState(true)
 	const [checking, setChecking] = useState(false)
@@ -28,6 +30,9 @@ function View () {
 	const [startTime, setStartTime] = useState(null)
 	const [elapsed, setElapsed] = useState(null)
 	const [, setTick] = useState(0)
+
+	// Leaderboard
+	const [lbName, setLbName] = useState('')
 
 	const allFound =  scene?.characters.every(c => found.includes(c.name)) ?? false
 
@@ -178,6 +183,27 @@ function View () {
 		}
 	}
 
+	async function handleLBSubmit(e) {
+		// lbName, timeMS, sceneId
+		e.preventDefault()
+
+		try {
+			const url = `${import.meta.env.VITE_API_URL}/scene/${slug}/leaderboard`
+			const res = await fetch(url, {
+				method: 'POST', 
+				headers: {
+					'Content-Type': 'application/json'
+				}, 
+				body: JSON.stringify({ playerName: lbName, timeMs: finish })
+			})
+			if (res.ok) {
+				navigate(`/leaderboard/${slug}`)
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
 	// get source
 	function getSrc(entity, who) {
         if (entity === 'scene') {
@@ -273,9 +299,15 @@ function View () {
 									<div className="winner-card">
 										<h1>You found them all!</h1>
 										<p>Time: {formatTime(finish)}</p>
-										<form action="" className='winner-form'>
-											<input type="text" required placeholder='your name'/>
-											<button>Submit to leaderboard</button>
+										<form onSubmit={handleLBSubmit} className='winner-form'>
+											<input 
+												type="text" 
+												required 
+												placeholder='your name' 
+												value={lbName}
+												onChange={(e) => setLbName(e.target.value)}
+											/>
+											<button type='submit'>Submit to leaderboard</button>
 										</form>
 										<button onClick={() => navigate('/')}>Back to Home</button>
 									</div>
