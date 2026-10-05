@@ -7,13 +7,13 @@ nav {
     display: flex;
     padding: 10px 30px 10px 30px;
 
-    background-color: #0A2947;
+    background-color: rgb(148, 4, 4);
     color: white;
 }
 
 .links {
     display: flex;
-    gap: 30px;
+    gap: 40px;
     margin-left: auto;
     color: white;
 }
@@ -21,4 +21,11 @@ nav {
 .links a {
     text-decoration: none;
     color: white;
+    margin: 0;
+}
+
+.links a.active {
+  font-weight: 900;
+  font-size: 20px;
+  border-bottom: 2px solid whitesmoke;
 }

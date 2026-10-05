@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-
+import { NavLink } from 'react-router-dom'
 import '../style/nav.css'
 
 function Nav () {
@@ -8,9 +7,9 @@ function Nav () {
         <nav>
             <h1>Where might waldo be ?</h1>
             <div className='links'>
-                <Link to={'/'}><h2>Home</h2></Link>
-                <Link to={'/leaderboards'}><h2>Leaderboards</h2></Link>
-                <Link to={'/about'}><h2>About Waldo</h2></Link>
+                <NavLink to={'/'}><h2>Home</h2></NavLink>
+                <NavLink to={'/leaderboards'}><h2>Leaderboards</h2></NavLink>
+                <NavLink to={'/about'}><h2>About Waldo</h2></NavLink>
             </div>
         </nav>
     )
