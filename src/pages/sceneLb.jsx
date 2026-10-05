@@ -37,19 +37,34 @@ function SceneLb () {
                 <h1>Scene: {slug}</h1>
             </div>
 
-            <div className="score-row-cont">
-                {scores.length > 0 
-                    ? scores.map( score => (
-                        <div key={score.id} className="score-row">
-                            <h3>{score.playerName}</h3>
-                            <p>{formatTime(score.timeMs)}</p>
-                            <p>{score.createdAt}</p>
-                        </div>
-                      ))
-                    : <div>
-                        <h2>No scores yet</h2>
-                    </div>
-                }
+            <div className="score-table-cont">
+
+                <table className="leaderboard">
+                    <thead>
+                        <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Time [min:sec:mil]</th>
+                        </tr>
+                    </thead>
+
+                    {scores.length > 0 
+                        ?  <tbody>
+                            {scores.map((s, i) => (
+                            <tr key={s.id}>
+                                <td>{i + 1}</td>
+                                <td>{s.playerName}</td>
+                                <td>{formatTime(s.timeMs)}</td>
+                            </tr>
+                            ))}
+                        </tbody>
+                        : <tbody>
+                            <tr>
+                                <td colSpan={3} className="lb-empty">No scores yet</td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
             </div>
         </div>
     )
