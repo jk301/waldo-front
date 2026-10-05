@@ -6,18 +6,24 @@ import '../style/sceneLb.css'
 function SceneLb () {
     const { slug } = useParams()
     const [scores, setScores] = useState([])
+    const [title, setTitle] = useState('')
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         (async () => {
+            setLoading(true)
             try {
                 const url = `${import.meta.env.VITE_API_URL}/scene/${slug}/leaderboard`
                 const res = await fetch(url)
                 if (res.ok) {
                     const data = await res.json()
                     setScores(data.scores)
+                    setTitle(data.title)
                 }
             } catch (error) {
                 console.log(error)
+            } finally {
+                setLoading(false)
             }
         })()
     }, [slug])
@@ -34,7 +40,7 @@ function SceneLb () {
     return (
         <div className="scene-lb">
             <div className="scene-detail">
-                <h1>Scene: {slug}</h1>
+                <h1>{title}</h1>
             </div>
 
             <div className="score-table-cont">
@@ -60,7 +66,9 @@ function SceneLb () {
                         </tbody>
                         : <tbody>
                             <tr>
-                                <td colSpan={3} className="lb-empty">No scores yet</td>
+                                <td colSpan={3} className="lb-empty">
+                                    {loading ? 'Fetching scores' : 'No scores yet'}
+                                </td>
                             </tr>
                         </tbody>
                     }
