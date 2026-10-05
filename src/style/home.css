@@ -1,4 +1,21 @@
 
+.leader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.leader > h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 50%;
+    text-align: center;
+    border-bottom: 1px solid grey;
+}
+
 .home {
     display: flex;
     align-items: center;
