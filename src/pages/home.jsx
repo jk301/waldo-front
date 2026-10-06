@@ -17,13 +17,10 @@ function Home () {
     useEffect(() => {(
         async () => {
             try {
-                console.log('actually fetching')
                 const res = await fetch(`${import.meta.env.VITE_API_URL}/scene/all`)
                 if (res.ok) {
-                    console.log('response is ok')
                     const data = await res.json()
                     setScenes(data.allScenes)
-                    console.log('scene set')
                 }
             } catch (error) {
                 console.log(error)

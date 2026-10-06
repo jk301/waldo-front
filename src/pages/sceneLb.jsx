@@ -36,7 +36,6 @@ function SceneLb () {
 		return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`
 	}
 
-    console.log(`scores: ${scores}`)
     return (
         <div className="scene-lb">
             <div className="scene-detail">

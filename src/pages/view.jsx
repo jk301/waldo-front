@@ -78,9 +78,7 @@ function View () {
 
 				if (res.ok) {
 					const data = await res.json()
-					console.log("finish set")
 					setFinish(data.timeMs)
-					console.log(`finish time: ${finish}`)
 				}
 			})()
 		} catch (error) {
@@ -157,12 +155,11 @@ function View () {
 		const x = Math.floor(((e.clientX - rec.left) / rec.width) * img.naturalWidth)
 		const y = Math.floor(((e.clientY - rec.top) / rec.height) * img.naturalHeight)
 
-		console.log({x, y})
+		// console.log({x, y})
 
 		// WIP
 		try {
 			const url = `${import.meta.env.VITE_API_URL}/scene/${slug}/check?x=${x}&y=${y}`
-			console.log(url)
 			const res = await fetch(url)
 			if (res.ok) {
 				const data = await res.json()
@@ -173,7 +170,6 @@ function View () {
 					setMarker((prev) =>  [...prev, {id: crypto.randomUUID(), status: 'hit', x, y, name: data.name}])
 				} else {
 					setMiss(true)
-					console.log('miss hit')
 				}
 			}
 		} catch (error) {
