@@ -85,11 +85,13 @@ function View () {
 			console.log(error)
 		}
 
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setElapsed(Date.now() - startTime)
 	}, [allFound, startTime, elapsed, slug, finish, session])
 
 	// reset on slug change
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setStartTime(null)
 		setElapsed(null)
 		setSession(null)
@@ -101,7 +103,8 @@ function View () {
 		setFound([])
 		setLoading(true)
 	},[slug])
-
+	
+	// eslint-disable-next-line react-hooks/purity
 	const ms = elapsed ?? (startTime !== null ? Date.now() - startTime : null)
 
 	function formatTime(ms) {
