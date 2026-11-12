@@ -1,16 +1,89 @@
-# React + Vite
+# Where might waldo be ?
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![screenshot](./images/home.png)
 
-Currently, two official plugins are available:
+![screenshot](./images/play.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![screenshot](./images/leader.png)
 
-## React Compiler
+A photo tagging app where you find waldo & his friends (or foe) . 
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+[Live site link](https://where-might-waldo-be.netlify.app/)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+[Backend repo link](https://github.com/jk301/waldo-api)
+
+[Frontend repo link](https://github.com/jk301/waldo-front)
+
+## Disclaimer
+
+- Backend is running on render (free-tier) which can have a bit of a cold start (could take 40-60 sec). Please be patient :) .
+
+
+## Usage
+
+1. No user account needed! just choose the scene & start playing!
+2. If you completed one of the scene, you can add your name on the leaderboard (if you want to).
+
+## Features
+
+- Backend time tracking
+- Used react-zoom-pan-pinch module for dynamic zoom-ins & dragging of the scene.
+
+
+## Installation
+
+### Back-end setup
+
+```
+git clone https://github.com/jk301/waldo-api.git
+```
+
+```
+cd waldo-api
+```
+
+```
+npm install
+```
+
+- create an env that will need a database(prisma postgres) link.
+- A client URL for CORS, (Which is hard coded here in app.js) example > http://localhost:5173/
+
+```
+npx prisma generate
+```
+
+```
+npx prisma migrate dev
+```
+
+and finally 
+
+```
+node app.js
+```
+
+
+### Front-end setup
+
+```
+git clone https://github.com/jk301/waldo-front.git
+```
+
+```
+cd waldo-front
+```
+
+```
+npm install
+```
+
+- create a env file that has a api url (VITE_API_URL) that needs backend URL to send requests. 
+- example: http://localhost:3000
+
+and run 
+
+```
+npm run dev
+```
